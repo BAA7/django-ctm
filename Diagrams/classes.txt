@@ -1,0 +1,47 @@
+@startuml
+class User{
+name: str
+email: str
+password: bytes
+qualifications: Qualification[]
+languages: Language[]
+chief: User
+}
+
+class Task{
+name: str
+qualifications_required: Qualification[]
+language_required: Language
+deadline: datestamp
+report_required: bool
+performer: User
+}
+
+class ArchiveTask{
+name: str
+qualifications_required: Qualification[]
+language_required: Language
+deadline: datestamp
+report_required: bool
+performer: User
+completion_date: datestamp
+}
+
+class Qualification{
+code: int
+name: str
+}
+
+class Language{
+name: str
+}
+
+User --> Task
+Qualification --> User
+Language --> User
+Qualification --> Task
+Language --> Task
+Qualification --> ArchiveTask
+Language --> ArchiveTask
+User --> ArchiveTask
+@enduml
