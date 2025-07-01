@@ -313,3 +313,6 @@ Preconditions: Administrator is on "Users" page
 2. System shows alert window with buttons "Confirm", "Cancel"
 3. Administrator presses "Confirm" button
 4. System removes user from database, their subordinates become their chief's subordinates
+
+## Classes diagram
+![alt text](https://github.com/BAA7/django-ctm/blob/main/Diagrams/classes.png)
