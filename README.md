@@ -1,10 +1,10 @@
-# Introduction
+# 1. Introduction
 
-## Purpose
+## 1.1. Purpose
 The product represents a web application called Corporative Task Manager, which allows employees of the company to
 create and distiribute job tasks between each other.
 
-This document is the System Requirement Specifications (SRS) for the product. It describes all its functions and purposes.
+This document is the System Requirements Specification (SRS) for the product. It describes all its functions and purposes.
 
 ## Area of application
 The developed product – Corporate Task Manager (CTM) – must help the company to organize employees' work process by
@@ -12,7 +12,7 @@ building and storing the employees hierarchy tree, where each employee (excludin
 chief and any amount of subordinates. Main functions of the product are connected to "chief-subordinates" relation in
 that tree.
 
-## Definitions, acronyms and abbreviations
+## Document conventions
 | Term | Definition |
 | --- | --- |
 | Company | The hypothetical client company for which the product is developed |
@@ -23,12 +23,17 @@ that tree.
 | Report | A document attached to a completed task if neccessary |
 | Hierarchy tree | A tree-like data structure representing employees' relations |
 
+## Intended audience and reading suggestions
+## Project scope
+## References
+
+
 # Overall description
 
-## Product positioning
+## Product perspective
 The product is a pet project imagined as a custom solution for inner use by the company.
 
-## Product functions
+## Product features
 User related functions:
 * authorization in system;
 * for administrators:
@@ -43,11 +48,16 @@ Task related functions:
 * for employees:
   * completing a task and attaching a report if neccessary.
 
-## Classes and user characteristics
+## User classes and characteristics
 The users of the product are the company's employees. They are split into 3 types:
 * employee – every entity of User class belongs to this type,
 * chief – user that has at least 1 subordinate in the hierarchy tree,
 * administrator – Django superuser that has permission to change any data in database.
+
+## Operating environment
+## Design and implementation constraints
+## User documentation
+## Assumptions and dependencies
 
 ## Constraints
 ### Employees' data storing
@@ -112,7 +122,7 @@ The goal is to create a web application for company's work process organization.
 - function of creating tasks and splitting them into subtasks distributed between them and their subordinates taking qualifications into account
 #### Administrator
 - functions of adding, editing and deleting data about employees, qualifications and languages
-### Другие функции
+### Other functions
 - employees must be able to get access to their accounts using their e-mail and password
 
 ## Use cases
