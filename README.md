@@ -1,39 +1,37 @@
 # 1. Introduction
 
 ## 1.1. Purpose
-The product represents a web application called Corporative Task Manager, which allows employees of the company to
-create and distiribute job tasks between each other.
+The purpose of this document is to present a detailed description of the Corporate Task Manager. It will explain the purpose and features of the system,the interfaces of the system, what the system will do, the constraints under which it must operate and how the system will react to external stimuli.
 
-This document is the System Requirements Specification (SRS) for the product. It describes all its functions and purposes.
+This document is intended for anyone interested in this project.
 
-## Area of application
-The developed product – Corporate Task Manager (CTM) – must help the company to organize employees' work process by
-building and storing the employees hierarchy tree, where each employee (excluding administrator – root node) has one
-chief and any amount of subordinates. Main functions of the product are connected to "chief-subordinates" relation in
-that tree.
+## 1.2. Scope
+The product to be produced – Corporate Task Manager (CTM) – must help the company to organize employees' work process by building and storing the employees hierarchy tree, where each employee (excluding administrator – root node) has one chief and any amount of subordinates. Main functions of the product are connected to "chief-subordinates" relation in that tree. The product is to be used for assigning and delegating work tasks between the employees and managing the inner structure of the company.
 
-## Document conventions
+## 1.3. Definitions, acronyms, and abbreviations
 | Term | Definition |
 | --- | --- |
 | Company | The hypothetical client company for which the product is developed |
-| Product | CTM, the software under development |
-| System | The product's backend part, providing the main functions |
+| Product/System | CTM, the software under development |
 | Task | An action required to be performed by the person to whom it is assigned |
-| Subtask | A task created by dividing another task |
+| Subtask | A task created by splitting another task |
 | Report | A document attached to a completed task if neccessary |
-| Hierarchy tree | A tree-like data structure representing employees' relations |
+| Hierarchy tree/Tree | A tree-like data structure representing employees' relations |
 
-## Intended audience and reading suggestions
-## Project scope
-## References
+## 1.4. References
+- IEEE Std 830-1998 Recommended Practice for Software Requirements Specifications
 
+## 1.5. Overview
+The following parts of this document contain more specific descriptions of product requirements.
 
-# Overall description
+Table of contents:
 
-## Product perspective
+# 2. Overall description
+
+## 2.1. Product perspective
 The product is a pet project imagined as a custom solution for inner use by the company.
 
-## Product features
+## 2.2. Product functions
 User related functions:
 * authorization in system;
 * for administrators:
@@ -48,28 +46,32 @@ Task related functions:
 * for employees:
   * completing a task and attaching a report if neccessary.
 
-## User classes and characteristics
+## 2.3. User characteristics
 The users of the product are the company's employees. They are split into 3 types:
 * employee – every entity of User class belongs to this type,
 * chief – user that has at least 1 subordinate in the hierarchy tree,
 * administrator – Django superuser that has permission to change any data in database.
 
-## Operating environment
-## Design and implementation constraints
-## User documentation
-## Assumptions and dependencies
+## 2.4. Constraints
+## 2.5. Assumptions and dependencies
 
-## Constraints
-### Employees' data storing
-In terms of accounts' security passwords must be written in system using Django's password hashing mechanisms.
+# 3. Specific requirements
 
-# Detailed requirements
-
-## Outer interfaces requirements
-### User interfaces
+# 4. External interface requirements
+## 4.1. User interfaces
 User interface is a web page.
-### Software interfaces
+## 4.2. Software interfaces
 Product requires a web-browser to lauch.
+## 4.3. Hardware interfaces
+## 4.4. Communication interfaces
+
+# 5. Non functional requirements
+## 5.1. Performance requirements
+## 5.2. Safety requirements
+## 5.3. Software quality attributes
+## 5.4. Security requirements
+
+# 6. Other requirements
 
 ## Functional requirements
 ### Unauthorized user
@@ -107,7 +109,9 @@ System must let administrator assign and reassign employees' chiefs.
 ### User requests
 The time of response to user requests mustn't be more than 5s.
 
-# Appendix
+# Appendix A: Glossary
+
+# Appendix B: Analysis models
 ## Subject area
 The goal is to create a web application for company's work process organization. The application should be provided with roles:
 - Employee
@@ -326,3 +330,5 @@ Preconditions: Administrator is on "Users" page
 
 ## Classes diagram
 ![alt text](https://github.com/BAA7/django-ctm/blob/main/Diagrams/classes.png)
+
+# Appendix C: Issues list
