@@ -17,6 +17,7 @@ The product to be produced – Corporate Task Manager (CTM) – must help the co
 | Subtask | A task created by splitting another task |
 | Report | A document attached to a completed task if neccessary |
 | Hierarchy tree/Tree | A tree-like data structure representing employees' relations |
+| Data | Everything stored in system's database: users, qualifications, languages etc |
 
 ## 1.4. References
 - IEEE Std 830-1998 Recommended Practice for Software Requirements Specifications
@@ -29,31 +30,35 @@ Table of contents:
 # 2. Overall description
 
 ## 2.1. Product perspective
-The product is a pet project imagined as a custom solution for inner use by the company.
+The product is a pet project imagined as a custom solution for inner use by the company. It is independent and totally self-contained.
 
 ## 2.2. Product functions
 User related functions:
 * authorization in system;
+* changing password;
 * for administrators:
-  * adding new employees into the system;
+  * adding new employees;
   * editing employees' data;
   * editing the hierarchy tree (chief appointments and reappointments);
-  * removing employees from the system.
+  * deleting employees.
 Task related functions:
 * for chiefs:
   * assignment of tasks with priorities and deadlines;
-  * dividing an assigned task into subtasks between self and subordinates;
+  * dividing an assigned task into subtasks between self and subordinates with suitable qualifications and skills;
 * for employees:
-  * completing a task and attaching a report if neccessary.
+  * completing a task and attaching a report to it if neccessary.
+Data related functions:
+* for administrators:
+  * editing data.
 
 ## 2.3. User characteristics
-The users of the product are the company's employees. They are split into 3 types:
-* employee – every entity of User class belongs to this type,
-* chief – user that has at least 1 subordinate in the hierarchy tree,
-* administrator – Django superuser that has permission to change any data in database.
+The users of the product are the company's employees. All of them have a high level of computer literacy.
 
 ## 2.4. Constraints
+* System must work properly on Edge, Chrome, Opera, Firefox and Safari browsers.
+
 ## 2.5. Assumptions and dependencies
+The system will be deployed on a server with the Linux Ubuntu 20.04 operating system.
 
 # 3. Specific requirements
 
