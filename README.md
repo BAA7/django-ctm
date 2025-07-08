@@ -18,6 +18,7 @@ The product to be produced – Corporate Task Manager (CTM) – must help the co
 | Report | A document attached to a completed task if neccessary |
 | Hierarchy tree/Tree | A tree-like data structure representing employees' relations |
 | Data | Everything stored in system's database: users, qualifications, languages etc |
+| Skills | A set of qualifications a user has and languages they know |
 
 ## 1.4. References
 - IEEE Std 830-1998 Recommended Practice for Software Requirements Specifications
@@ -26,6 +27,7 @@ The product to be produced – Corporate Task Manager (CTM) – must help the co
 The following parts of this document contain more specific descriptions of product requirements.
 
 Table of contents:
+TODO
 
 # 2. Overall description
 
@@ -61,6 +63,87 @@ The users of the product are the company's employees. All of them have a high le
 The system will be deployed on a server with the Linux Ubuntu 20.04 operating system.
 
 # 3. Specific requirements
+
+## 3.1. External interface requirements
+### 3.1.1. User interfaces
+### 3.1.2. Hardware interfaces
+-
+### 3.1.3. Software interfaces
+#### 3.1.3.1. 
+### 3.1.4. Communication interfaces
+
+## 3.2. Functional requirements
+
+### 3.2.1. Unauthorized user
+#### 3.2.1.1. Authentication
+System must let unauthorized user perform an authentication using their e-mail and password
+#### 3.2.1.2. Authorization
+System must autorize unauthorized user after a successful authentication
+#### 3.2.1.3. Page access
+System must redirect unauthorized user from any product's page they visit to authentication page
+
+### 3.2.2. Authorized user
+#### 3.2.2.1. Users table
+System must provide authorized user with information about all users:
+* name (must have a hyperlink to the user's profile page)
+* e-mail
+* chief's name
+#### 3.2.2.2. User profile
+System must provide authorized user with detailed information about any specific user:
+* name
+* e-mail
+* qualifications
+* languages knowledge
+* chief's name
+#### 3.2.2.3. Password change
+System must let authorized user change their password when they are on their profile page
+#### 3.2.2.4. Logout
+System must let authorized user end their authorization
+#### 3.2.2.5. Tasks table
+System must provide authorized user with list of tasks assigned to them:
+* name
+* deadline
+#### 3.2.2.6. Report appending
+System must let authorized user append a report to their task if neccessary
+#### 3.2.2.7. Task completion
+System must let authorized user mark a task assigned to them as completed if:
+* report is appended to the task,
+
+or
+* report is not required for the task
+
+### 3.2.3. Chief
+#### 3.2.3.1. Tasks table
+*(Appendix to 3.2.2.5)* System must provide chief with list of their subordinates' tasks:
+* name
+* deadline
+* performer's name
+#### 3.2.3.2. Task assigning
+System must let chief create new tasks and assign them to themself or their subordinates with suitable skills
+#### 3.2.3.2. Task split
+System must let chief split a task assigned to them into subtasks distibuted between them and their subordinates with suitable skills
+
+### 3.2.4. Administrator
+#### 3.2.4.1. User creation
+System must let administrator create new users
+#### 3.2.4.2. User editing
+System must let administrator edit existing users fields excluding passwords
+#### 3.2.4.3. User removing
+System must let administrator remove users from it
+#### 3.2.4.4. Tasks table
+*(Appendix to 3.2.3.1)* System must provide administrator with list of tasks not assigned to them or their subordinates
+#### 3.2.4.5. Data tables
+System must provide administrator with information about all qualifications and languages stored in database
+#### 3.2.4.6. Data creation
+System must let administrator create new qualifications and languages
+#### 3.2.4.7. Data editing
+System must let administrator edit existing qualifications and languages
+#### 3.2.4.8. Data removing
+System must let administrator remove existing qualifications and languages and perform cascade delete on all links pointing to that data
+
+## 3.3. Performance requirements
+## 3.4. Design constraints
+## 3.5. Software system attributes
 
 # 4. External interface requirements
 ## 4.1. User interfaces
