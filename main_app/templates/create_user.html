@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block content %}
+<table>
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <label for="chief_name">Chief:</label>
+        <input list="chiefs" id="chief_name">
+        <datalist id="chiefs">
+            {% for user in chiefs %}
+            <option value="{{ user.name }}" data-id="{{user.id}}">{{ user.name }}</option>
+            {% endfor %}
+        </datalist><br/>
+
+        <!-- Qualifications selection -->
+        <label for="qualifications">Qualifications:</label>
+        <select id="qualifications" multiple placeholder="Select qualifications...">
+            {% for qual in qualifications %}
+            <option value="{{ qual.id }}">{{ qual.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" id="selected_qualifications" name="qualifications">
+        <br/>
+
+        <!-- Languages selection -->
+        <label for="languages">Languages:</label>
+        <select id="languages" multiple placeholder="Select languages...">
+            {% for lang in languages %}
+            <option value="{{ lang.id }}">{{ lang.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" id="selected_languages" name="languages">
+        <br/>
+
+        <input type="submit" id="signin_btn"/>
+    </form>
+    </table>
+    <script>
+        const input = document.getElementById('chief_name');
+        const hidden_input = document.getElementById('chief_id');
+        const datalist = document.getElementById('chiefs');
+
+        input.addEventListener('input', function() {
+            const selected_value = this.value;
+            const options = datalist.options;
+
+            for (let i = 0; i < options.length; i++){
+                if (options[i].value === selected_value) {
+                  hidden_input.value = options[i].getAttribute('data-id');
+                  return;
+                }
+            }
+            hiddenInput.value = '';
+        });
+
+        new TomSelect('#qualifications', {
+            plugins: {
+                remove_button: {
+                    title: 'Remove this item',
+                }
+            },
+            placeholder: 'Select qualifications...',
+            onItemAdd: function() {
+                updateHiddenInput('qualifications', 'selected_qualifications');
+            },
+            onItemRemove: function() {
+                updateHiddenInput('qualifications', 'selected_qualifications');
+            }
+        });
+
+        new TomSelect('#languages', {
+            plugins: {
+                remove_button: {
+                    title: 'Remove this item',
+                }
+            },
+            placeholder: 'Select languages...',
+            onItemAdd: function() {
+                updateHiddenInput('languages', 'selected_languages');
+            },
+            onItemRemove: function() {
+                updateHiddenInput('languages', 'selected_languages');
+            }
+        });
+
+        function updateHiddenInput(selectId, hiddenInputId) {
+            const select = document.getElementById(selectId);
+            const hiddenInput = document.getElementById(hiddenInputId);
+            const selectedValues = Array.from(select.selectedOptions).map(option => option.value);
+            hiddenInput.value = selectedValues.join(',');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHiddenInput('qualifications', 'selected_qualifications');
+            updateHiddenInput('languages', 'selected_languages');
+        });
+
+        document.querySelector('form').addEventListener('submit', function() {
+            updateHiddenInput('qualifications', 'selected_qualifications');
+            updateHiddenInput('languages', 'selected_languages');
+        });
+    </script>
+{% endblock %}
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create User</title>
+</head>
+<body>
+    <table>
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <label for="chief_name">Chief:</label>
+        <input list="chiefs" id="chief_name">
+        <datalist id="chiefs">
+            {% for user in chiefs %}
+            <option value="{{ user.name }}" data-id="{{user.id}}">{{ user.name }}</option>
+            {% endfor %}
+        </datalist>
+        <input type="submit" id="signin_btn"/>
+    </form>
+    </table>
+    <script>
+        const input = document.getElementById('chief_name');
+        const hidden_input = document.getElementById('chief_id');
+        const datalist = document.getElementById('chiefs');
+
+        input.addEventListener('input', function() {
+            const selected_value = this.value;
+            const options = datalist.options;
+
+            for (let i = 0; i < options.length; i++){
+                if (options[i].value === selected_value) {
+                  hidden_input.value = options[i].getAttribute('data-id');
+                  return;
+                }
+            }
+            hiddenInput.value = '';
+        });
+    </script>
+</body>
+</html>-->

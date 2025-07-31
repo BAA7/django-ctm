@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ user.name }}
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<label for="name">Name:</label>
+<input id="name" value="{{ name }}">
+<label for="chief_name">Chief:</label>
+<input type="hidden" id="chief_id" value="{{ current_chief.id }}">
+<input list="chiefs" id="chief_name" value="{{ current_chief.name }}">
+<datalist id="chiefs">
+    {% for chief in chiefs %}
+    <option value="{{ chief.name }}" data-id="{{chief.id}}">{{ chief.name }}</option>
+    {% endfor %}
+</datalist><br/>
+
+<label for="qualifications">Qualifications:</label>
+<select id="qualifications" multiple placeholder="Select qualifications...">
+    {% for qual in qualifications %}
+    <option value="{{ qual.id }}">{{ qual.name }}</option>
+    {% endfor %}
+</select>
+<input type="hidden" id="selected_qualifications" name="qualifications">
+<br/>
+
+<label for="languages">Languages:</label>
+<select id="languages" multiple placeholder="Select languages...">
+    {% for lang in languages %}
+    <option value="{{ lang.id }}">{{ lang.name }}</option>
+    {% endfor %}
+</select>
+<input type="hidden" id="selected_languages" name="languages">
+<br/>
+
+<input type="submit" id="signin_btn"/>
+
+{{ user_qualifications|json_script:"user-qualifications-data" }}
+{{ user_languages|json_script:"user-languages-data" }}
+<script>
+  const input = document.getElementById('chief_name');
+  const hidden_input = document.getElementById('chief_id');
+  const datalist = document.getElementById('chiefs');
+
+  input.addEventListener('input', function() {
+      const selected_value = this.value;
+      const options = datalist.options;
+
+      for (let i = 0; i < options.length; i++){
+          if (options[i].value === selected_value) {
+            hidden_input.value = options[i].getAttribute('data-id');
+            return;
+          }
+      }
+      hiddenInput.value = '';
+  });
+
+  const qual_select = new TomSelect('#qualifications', {
+      plugins: {
+          remove_button: {
+              title: 'Remove this item',
+          }
+      },
+      placeholder: 'Select qualifications...',
+      onItemAdd: function() {
+          updateHiddenInput('qualifications', 'selected_qualifications');
+      },
+      onItemRemove: function() {
+          updateHiddenInput('qualifications', 'selected_qualifications');
+      }
+  });
+  qual_select.setValue(JSON.parse(document.getElementById('user-qualifications-data').textContent));
+
+  const lang_select = new TomSelect('#languages', {
+      plugins: {
+          remove_button: {
+              title: 'Remove this item',
+          }
+      },
+      placeholder: 'Select languages...',
+      onItemAdd: function() {
+          updateHiddenInput('languages', 'selected_languages');
+      },
+      onItemRemove: function() {
+          updateHiddenInput('languages', 'selected_languages');
+      }
+  });
+  lang_select.setValue(JSON.parse(document.getElementById('user-languages-data').textContent));
+
+  function updateHiddenInput(selectId, hiddenInputId) {
+      const select = document.getElementById(selectId);
+      const hiddenInput = document.getElementById(hiddenInputId);
+      const selectedValues = Array.from(select.selectedOptions).map(option => option.value);
+      hiddenInput.value = selectedValues.join(',');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      updateHiddenInput('qualifications', 'selected_qualifications');
+      updateHiddenInput('languages', 'selected_languages');
+  });
+
+  document.querySelector('form').addEventListener('submit', function() {
+      updateHiddenInput('qualifications', 'selected_qualifications');
+      updateHiddenInput('languages', 'selected_languages');
+  });
+</script>
+{% endblock %}

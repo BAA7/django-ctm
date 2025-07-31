@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Admin
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<h2>Qualifications</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Code</th>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for qual in qualifications %}
+    <tr>
+        <td data-field="id">{{ qual.id }}</td>
+        <td data-field="code">{{ qual.code }}</td>
+        <td data-field="name">{{ qual.name }}</td>
+        <td>
+            <button onclick="edit(this)">Edit</button>
+        </td>
+        <td>
+            <button onclick="delete_row(this, 'q')" data-id="{{ qual.id }}">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+    <form method="post">
+        <tr>
+            <td>New</td>
+            <td><input id="code" name="code" type="text" placeholder="Code"/></td>
+            <td><input id="qual_name" name="name" type="text" placeholder="Name"/></td>
+            <td><input type="submit" value="Create"/></td>
+        </tr>
+    </form>
+    </tbody>
+</table>
+<h2>Languages</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for lang in languages %}
+    <tr>
+        <td data-field="id">{{ lang.id }}</td>
+        <td data-field="name">{{ lang.name }}</td>
+        <td>
+            <button onclick="edit(this)">Edit</button>
+        </td>
+        <td>
+            <button onclick="delete_row(this, 'l')" data-id="{{ lang.id }}">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+    <form method="post">
+        <tr>
+            <td>New</td>
+            <td><input id="lang_name" name="name" type="text" placeholder="Name"/></td>
+            <td><input type="submit" value="Create"/></td>
+        </tr>
+    </form>
+    </tbody>
+</table>
+<script>
+    function edit(button){
+        const row = button.closest('tr');
+        const is_editing = button.textContent === 'Save';
+
+        if (is_editing) {
+            const row_data = {};
+            row.querySelectorAll('td[data-field]').forEach(cell => {
+                const field = cell.getAttribute('data-field');
+                if (field === 'id') {
+                    row_data[field] = cell.innerHTML;
+                    return;
+                }
+                const input = cell.querySelector('input');
+                row_data[field] = input.value;
+                cell.innerHTML = input.value;
+            });
+            fetch(`/admin/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(row_data)
+            });
+            button.textContent = 'Edit';
+        }
+        else {
+            row.querySelectorAll('td[data-field]').forEach(cell => {
+                if (cell.getAttribute('data-field') === 'id') {
+                    return;
+                }
+                const value = cell.textContent;
+                cell.innerHTML = `<input type="text" value="${value}">`;
+            });
+            button.textContent = 'Save';
+        }
+    }
+
+    function delete_row(button, type){
+        const row = button.closest('tr');
+        const id = button.getAttribute('data-id');
+        // const obj_data = {};
+
+        if (confirm('Are you sure?')) {
+            const request_data = {};
+            request_data['id'] = id;
+            request_data['type'] = type;
+            fetch(`/admin/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(request_data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error deleting language');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting language');
+            });
+        }
+    }
+</script>
+{% endblock %}

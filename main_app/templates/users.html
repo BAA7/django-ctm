@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block content %}
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Chief</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td><a href="/profile/{{ user.id }}">{{ user.name }}</a></td>
+            <td>{{ user.chief }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% if request.user.is_admin %}
+<a href="/create-user/" class="btn">Add new</a>
+{% endif %}
+{% endblock %}

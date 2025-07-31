@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ user.name }}
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<h1>{{ user.name }}</h1>
+<b>ID:</b> {{ user.id }}<br/>
+<b>Email:</b> {{ user.email }}
+{% if request.user == user %}
+<input type="button" id="pass_change" value="Change password"/>
+<div id="pass_change_form" style="display: none;">
+    {{ form }}
+    <input type="submit" id="save_password" value="Save password" onclick="change_password()"/>
+</div>
+
+{% endif %}<br/>
+{% if user.chief %}
+<b>Chief:</b> <a href="/profile/{{ user.chief.id }}" class="text-white">{{ user.chief }}</a><br/>
+{% endif %}
+<b>Qualifications:</b>
+{% for qual in user.qualifications.all %}
+{{ qual.name }}{% if not forloop.last %}, {% endif %}
+{% endfor %}
+{% if not user.qualifications.all %} None {% endif %}
+<br/>
+<b>Languages:</b>
+{% for lang in user.languages.all %}
+{{ lang.name }}{% if not forloop.last %}, {% endif %}
+{% endfor %}
+{% if not user.languages.all %} None {% endif %}
+<br/>
+<b>Subordinates:</b>
+{% for sub in user.subordinates.all %}
+<a href="/profile/{{sub.id}}">{{ sub.name }}</a>{% if not forloop.last %}, {% endif %}
+{% endfor %}
+{% if not user.subordinates.all %} None {% endif %}
+<br/>
+{% if request.user.is_admin %}
+<form method="get" action="/edit-user/{{ user.id }}">
+    <input type="submit" value="Edit"/>
+</form>
+<input type="button" value="Delete" onclick="delete_user({{user.id}})"/>
+{% endif %}
+
+<script>
+    const old_password_widget = document.getElementById('old_password');
+    const new_password1_widget = document.getElementById('new_password1');
+    const new_password2_widget = document.getElementById('new_password2');
+
+    document.getElementById('pass_change').addEventListener('click', function() {
+        const container = document.getElementById('pass_change_form');
+        if (container.style.display === 'none') {
+          container.style.display = 'block';
+          this.value = 'Cancel';
+        } else {
+          container.style.display = 'none';
+          this.value = 'Change password';
+        }
+    });
+
+    function delete_user(user_id){
+        if (confirm('Are you sure?')){
+            fetch(`/delete-user/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({'user_id': user_id})
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.replace('/users/');
+                } else {
+                    alert('Error deleting user');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting user');
+            });
+        }
+    }
+
+    function change_password(){
+        const request_body = {};
+        request_body['old_password'] = old_password_widget.value;
+        request_body['new_password1'] = new_password1_widget.value;
+        request_body['new_password2'] = new_password2_widget.value;
+        fetch(`/profile/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(request_body)
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Error changing password');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error changing password');
+        });
+
+    }
+</script>
+{% endblock %}

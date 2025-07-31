@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tasks
+{% endblock %}
+
+{% block content %}
+  <h2>Your tasks</h2>
+  {% if self %}
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Language required</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for task in self %}
+      <tr>
+        <td>{{ task.name }}</td>
+        <td>{{ task.language_required }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  Nothing here now
+  {% endif %}
+
+  <h2>Subordinate tasks</h2>
+  {% if subs %}
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Language required</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for task in subs %}
+      <tr>
+        <td>{{ task.name }}</td>
+        <td>{{ task.language_required }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  Nothing here now
+  {% endif %}
+
+  <h2>Other tasks</h2>
+  {% if other %}
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Language required</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for task in other %}
+      <tr>
+        <td>{{ task.name }}</td>
+        <td>{{ task.language_required }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  Nothing here now
+  {% endif %}
+{% endblock %}
