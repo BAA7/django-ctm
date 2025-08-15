@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tasks
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<h2>Creating task</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+
+    <label for="lang_name">Language required:</label>
+    <input list="languages" id="lang_name">
+    <datalist id="languages">
+        {% for lang in languages %}
+        <option value="{{ lang.name }}" data-id="{{ lang.id }}">{{ lang.name }}</option>
+        {% endfor %}
+    </datalist><br/>
+
+    <label for="performer_name">Performer:</label>
+    <input list="performers" id="performer_name">
+    <datalist id="performers">
+        <option value="{{ request.user.name }}" data-id="{{ request.user.id }}">{{ request.user.name }}</option>
+        {% for user in performers %}
+        <option value="{{ user.name }}" data-id="{{ user.id }}">{{ user.name }}</option>
+        {% endfor %}
+    </datalist><br/>
+
+    <input type="submit" value="Create"/>
+</form>
+
+<script>
+    const lang_input = document.getElementById('lang_name');
+    const lang_hidden_input = document.getElementById('lang_id');
+    const lang_datalist = document.getElementById('languages');
+
+    const perf_input = document.getElementById('performer_name');
+    const perf_hidden_input = document.getElementById('performer_id');
+    const perf_datalist = document.getElementById('performers');
+
+    lang_input.addEventListener('input', function() {
+        const selected_value = this.value;
+        const options = lang_datalist.options;
+
+        for (let i = 0; i < options.length; i++){
+            if (options[i].value === selected_value) {
+              lang_hidden_input.value = options[i].getAttribute('data-id');
+              return;
+            }
+        }
+        lang_hiddenInput.value = '';
+    });
+
+    perf_input.addEventListener('input', function() {
+        const selected_value = this.value;
+        const options = perf_datalist.options;
+
+        for (let i = 0; i < options.length; i++){
+            if (options[i].value === selected_value) {
+              perf_hidden_input.value = options[i].getAttribute('data-id');
+              return;
+            }
+        }
+        perf_hiddenInput.value = '';
+    });
+
+    new TomSelect('#selected_qualifications', {
+        plugins: {
+            remove_button: {
+                title: 'Remove this item',
+            }
+        },
+        placeholder: 'Select qualifications...',
+        onItemAdd: function() {
+            //updateHiddenInput('qualifications', 'selected_qualifications');
+            //updateHiddenInput('qualifications', 'qual_ids');
+        },
+        onItemRemove: function() {
+            //updateHiddenInput('qualifications', 'selected_qualifications');
+            //updateHiddenInput('qualifications', 'qual_ids');
+        }
+    });
+
+    function updateHiddenInput(selectId, hiddenInputId) {
+        const select = document.getElementById(selectId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const selectedValues = Array.from(select.selectedOptions).map(option => option.value);
+        hiddenInput.value = selectedValues.join(',');
+    }
+</script>
+{% endblock %}

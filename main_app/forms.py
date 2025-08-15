@@ -1,8 +1,12 @@
+from email.policy import default
+
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 
-from .models import User
+from .models import User, Task, Qualification, Language
 from django import forms
+
+from datetime import date
 
 
 class SignUpForm(forms.ModelForm):
@@ -34,3 +38,17 @@ class PasswordChangeForm(forms.Form):
     old_password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'old_password'}), label='Old password')
     new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'new_password1'}), label='New password')
     new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'new_password2'}), label='Confirm new password')
+
+
+class TaskCreationForm(forms.ModelForm):
+    name = forms.CharField(max_length=50, label='Name')
+    deadline = forms.DateField(label='Deadline', widget=forms.DateInput(attrs={'type': 'date'}), initial=date.today)
+    report_required = forms.BooleanField(label='Report required', required=False)
+    performer = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.HiddenInput(attrs={'id': 'performer_id'}))
+    language_required = forms.ModelChoiceField(queryset=Language.objects.all(), widget=forms.HiddenInput(attrs={'id': 'lang_id'}))
+    qualifications_required = forms.ModelMultipleChoiceField(queryset=Qualification.objects.all(),
+                                                             widget=forms.SelectMultiple(attrs={'id': 'selected_qualifications'}))
+
+    class Meta:
+        model = Task
+        fields = ['name', 'deadline', 'report_required', 'performer', 'language_required', 'qualifications_required']

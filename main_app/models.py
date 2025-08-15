@@ -3,6 +3,8 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+from datetime import date
+
 
 class UserManager(BaseUserManager):
     def create_user(self, name, email, password, chief=None):
@@ -28,9 +30,15 @@ class Qualification(models.Model):
     code = models.CharField(max_length=10)
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name
+
 
 class Language(models.Model):
     name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
 
 
 class User(AbstractBaseUser):
@@ -81,11 +89,31 @@ class Task(models.Model):
     performer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
 
+class ArchiveTaskManager(models.Manager):
+    def create_from_task(self, task):
+        return self.create(
+            name=task.name,
+            deadline=task.deadline,
+            report_required=task.report_required,
+            performer=task.performer,
+            completion_date=date.today()
+        )
+
+    def from_task(self, task):
+        return self.model(
+            name=task.name,
+            deadline=task.deadline,
+            report_required=task.report_required,
+            performer=task.performer,
+            completion_date=date.today()
+        )
+
+
 class ArchiveTask(models.Model):
     name = models.CharField(max_length=50)
     deadline = models.DateField()
     report_required = models.BooleanField(default=False)
-    qualifications_required = models.ManyToManyField(Qualification)
-    language_required = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
     performer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     completion_date = models.DateField()
+
+    objects = ArchiveTaskManager()

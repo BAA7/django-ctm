@@ -30,6 +30,7 @@ Admin
     </tr>
     {% endfor %}
     <form method="post">
+        {% csrf_token %}
         <tr>
             <td>New</td>
             <td><input id="code" name="code" type="text" placeholder="Code"/></td>
@@ -61,6 +62,7 @@ Admin
     </tr>
     {% endfor %}
     <form method="post">
+        {% csrf_token %}
         <tr>
             <td>New</td>
             <td><input id="lang_name" name="name" type="text" placeholder="Name"/></td>

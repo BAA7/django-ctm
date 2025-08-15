@@ -11,14 +11,15 @@
 <b>Email:</b> {{ user.email }}
 {% if request.user == user %}
 <input type="button" id="pass_change" value="Change password"/>
-<div id="pass_change_form" style="display: none;">
+<form method="post" id="pass_change_form" style="display: none;">
+    {% csrf_token %}
     {{ form }}
-    <input type="submit" id="save_password" value="Save password" onclick="change_password()"/>
-</div>
+    <input type="submit" id="save_password" value="Save password"/>
+</form>
 
 {% endif %}<br/>
 {% if user.chief %}
-<b>Chief:</b> <a href="/profile/{{ user.chief.id }}" class="text-white">{{ user.chief }}</a><br/>
+<b>Chief:</b> <a href="/profile/{{ user.chief.id }}">{{ user.chief }}</a><br/>
 {% endif %}
 <b>Qualifications:</b>
 {% for qual in user.qualifications.all %}
@@ -50,16 +51,20 @@
     const new_password1_widget = document.getElementById('new_password1');
     const new_password2_widget = document.getElementById('new_password2');
 
-    document.getElementById('pass_change').addEventListener('click', function() {
-        const container = document.getElementById('pass_change_form');
-        if (container.style.display === 'none') {
-          container.style.display = 'block';
-          this.value = 'Cancel';
-        } else {
-          container.style.display = 'none';
-          this.value = 'Change password';
-        }
-    });
+    const pass_change = document.getElementById('pass_change');
+
+    if (pass_change){
+        document.getElementById('pass_change').addEventListener('click', function() {
+            const container = document.getElementById('pass_change_form');
+            if (container.style.display === 'none') {
+              container.style.display = 'block';
+              this.value = 'Cancel';
+            } else {
+              container.style.display = 'none';
+              this.value = 'Change password';
+            }
+        });
+    }
 
     function delete_user(user_id){
         if (confirm('Are you sure?')){
@@ -100,7 +105,7 @@
         })
         .then(response => {
             if (response.ok) {
-                location.reload();
+                location.reload(true);
             } else {
                 alert('Error changing password');
             }

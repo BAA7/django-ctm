@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tasks
+{% endblock %}
+
+{% block content %}
+<h2>Splitting task</h2>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Deadline</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>{{ task.id }}</td>
+    <td>{{ task.name }}</td>
+    <td>{{ task.deadline }}</td>
+  </tr>
+  </tbody>
+</table>
+
+<h2>Subtasks</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Deadline</th>
+    <th>Language</th>
+    <th>Qualifications</th>
+    <th>Performer</th>
+  </tr>
+  </thead>
+  <tbody id="table_body">
+
+  </tbody>
+</table>
+<h2>New subtask</h2>
+{% csrf_token %}
+<form method="post" id="subtask_form">
+  {{ form }}
+  <label for="lang_name">Language required:</label>
+    <input list="languages" id="lang_name">
+    <datalist id="languages">
+        {% for lang in languages %}
+        <option value="{{ lang.name }}" data-id="{{ lang.id }}">{{ lang.name }}</option>
+        {% endfor %}
+    </datalist><br/>
+
+    <label for="performer_name">Performer:</label>
+    <input list="performers" id="performer_name" autocomplete="off">
+    <datalist id="performers">
+        <option value="{{ request.user.name }}" data-id="{{ request.user.id }}">{{ request.user.name }}</option>
+        {% for user in performers %}
+        <option value="{{ user.name }}" data-id="{{ user.id }}">{{ user.name }}</option>
+        {% endfor %}
+    </datalist><br/>
+
+  <input type="button" value="Add subtask" onclick="add_subtask()"/>
+</form>
+
+<input type="button" onclick="split_task()" value="Split"/>
+
+{{ task.report_required|json_script:"base-report" }}
+<script>
+  const subtasks = [];
+
+  const sub_form = document.getElementById('subtask_form');
+  const container = document.getElementById('table_body');
+
+  const name_input = document.getElementById('id_name');
+  const deadline_input = document.getElementById('id_deadline');
+  const report_input = document.getElementById('id_report_required');
+  report_input.value = document.getElementById('base-report').value;
+  report_input.type = 'hidden';
+  document.querySelector('label[for="id_report_required"]').style.display = 'none';
+  const lang_input = document.getElementById('lang_name');
+  const lang_hidden_input = document.getElementById('lang_id');
+  const lang_datalist = document.getElementById('languages');
+
+  const perf_input = document.getElementById('performer_name');
+  const perf_hidden_input = document.getElementById('performer_id');
+  const perf_datalist = document.getElementById('performers');
+  const qual_input = document.getElementById('selected_qualifications');
+
+  lang_input.addEventListener('input', function() {
+        const selected_value = this.value;
+        const options = lang_datalist.options;
+
+        for (let i = 0; i < options.length; i++){
+            if (options[i].value === selected_value) {
+              lang_hidden_input.value = options[i].getAttribute('data-id');
+              return;
+            }
+        }
+        lang_hidden_input.value = '';
+    });
+
+    perf_input.addEventListener('input', function() {
+        const selected_value = this.value;
+        const options = perf_datalist.options;
+
+        for (let i = 0; i < options.length; i++){
+            if (options[i].value === selected_value) {
+              perf_hidden_input.value = options[i].getAttribute('data-id');
+              return;
+            }
+        }
+        perf_hidden_input.value = '';
+    });
+
+  const tom_quals = new TomSelect('#selected_qualifications', {
+        plugins: {
+            remove_button: {
+                title: 'Remove this item',
+            }
+        },
+        placeholder: 'Select qualifications...',
+        onItemAdd: function() {
+            //updateHiddenInput('qualifications', 'selected_qualifications');
+            //updateHiddenInput('qualifications', 'qual_ids');
+        },
+        onItemRemove: function() {
+            //updateHiddenInput('qualifications', 'selected_qualifications');
+            //updateHiddenInput('qualifications', 'qual_ids');
+        }
+    });
+
+  function add_subtask(){
+    const name = name_input.value;
+    const deadline = deadline_input.value;
+    const performer = perf_input.value;
+    const perf_id = perf_hidden_input.value;
+    const language = lang_input.value;
+    const lang_id = lang_hidden_input.value;
+    const quals = Array.from(qual_input.selectedOptions).map(option => option.text).join(', ');
+    const quals_id = Array.from(qual_input.selectedOptions).map(option => option.value).join(',');
+
+    if (!name || !deadline || !performer || !language || !quals) {
+      alert('All fields must be filled');
+      return;
+    }
+
+    subtasks.push({name, deadline, perf_id, lang_id, quals_id});
+    const row = `<tr><td>${name}</td><td>${deadline}</td><td>${language}</td><td>${quals}</td><td>${performer}</td></tr>`;
+    container.insertAdjacentHTML('beforeend', row);
+
+    name_input.value = '';
+    deadline_input.value = '';
+    perf_input.value = '';
+    perf_hidden_input.value = '';
+    lang_input.value = '';
+    lang_hidden_input.value = '';
+    tom_quals.clear();
+  }
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+      const performers = {{ performers|safe }};
+
+      function updateExecutorList() {
+        const selectedQualIds = Array.from(qual_input.selectedOptions).map(opt => parseInt(opt.value));
+
+        perf_datalist.innerHTML = '';
+
+        if (selectedQualIds.length === 0) {
+          performers.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.name;
+            option.setAttribute('data-id', user.id);
+            perf_datalist.appendChild(option);
+          });
+        } else {
+          performers.forEach((user, index) => {
+            const hasAllQuals = selectedQualIds.every(qualId => user.qualifications.includes(qualId));
+            if (hasAllQuals || index === 0) {
+              const option = document.createElement('option');
+              option.value = user.name;
+              option.setAttribute('data-id', user.id);
+              perf_datalist.appendChild(option);
+            }
+          });
+        }
+      }
+
+      qual_input.addEventListener('change', updateExecutorList);
+
+      updateExecutorList();
+    });
+
+    function split_task(){
+      const request_body = {
+        'task_id': {{ task.id }},
+        'subtasks': subtasks
+      }
+      console.log(request_body);
+      fetch(`/split-task/`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          },
+          body: JSON.stringify(request_body)
+      })
+      .then(response => {
+          if (response.ok) {
+              window.location.href = `/`;
+          } else {
+              alert('Error splitting task');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('Error splitting task');
+      });
+    }
+</script>
+{% endblock %}

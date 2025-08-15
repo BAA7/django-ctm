@@ -10,6 +10,7 @@ Users
     <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>E-mail</th>
         <th>Chief</th>
     </tr>
     </thead>
@@ -18,12 +19,13 @@ Users
         <tr>
             <td>{{ user.id }}</td>
             <td><a href="/profile/{{ user.id }}">{{ user.name }}</a></td>
+            <td>{{ user.email }}</td>
             <td>{{ user.chief }}</td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
 {% if request.user.is_admin %}
-<a href="/create-user/" class="btn">Add new</a>
+<a href="/create-user/">Add new</a>
 {% endif %}
 {% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Archive
+{% endblock %}
+
+{% block content %}
+<h2>Archive</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Performer</th>
+    <th>Deadline</th>
+    <th>Completion date</th>
+    <th>Report</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for task in tasks %}
+  <tr>
+    <td>{{ task.name }}</td>
+    <td>{{ task.performer }}</td>
+    <td>{{ task.deadline }}</td>
+    <td>{{ task.completion_date }}</td>
+    <td>
+      {% if task.report %}
+      <a href="archive/?task_id={{ task.id }}">Download</a>
+      {% else %}
+      -
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

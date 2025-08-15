@@ -7,18 +7,36 @@ Tasks
 {% block content %}
   <h2>Your tasks</h2>
   {% if self %}
-  <table>
+  <table id="self_table">
     <thead>
     <tr>
       <th>Name</th>
-      <th>Language required</th>
+      <th>Deadline</th>
+      <th>Report</th>
     </tr>
     </thead>
     <tbody>
       {% for task in self %}
-      <tr>
+      <tr class="task_row">
         <td>{{ task.name }}</td>
-        <td>{{ task.language_required }}</td>
+        <td>{{ task.deadline }}</td>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+        <td>
+          <input type="hidden" value="{{ task.id }}" name="task_id"/>
+          {% if task.report_required %}
+          <input type="file" name="report" id="report" class="file_input"/>
+          {% else %}
+          -
+          {% endif %}
+        </td>
+        <td>
+          <input type="submit" class="submit_btn" id="complete_task" {% if task.report_required %} disabled {% endif %}/>
+        </td>
+        </form>
+        {% if is_chief %}
+        <td><a href="split-task/{{ task.id }}" type="btn">Split</a></td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>
@@ -33,14 +51,40 @@ Tasks
     <thead>
     <tr>
       <th>Name</th>
-      <th>Language required</th>
+      <th>Deadline</th>
+      <th>Performer</th>
     </tr>
     </thead>
     <tbody>
       {% for task in subs %}
       <tr>
         <td>{{ task.name }}</td>
-        <td>{{ task.language_required }}</td>
+        <td>{{ task.deadline }}</td>
+        <td>{{ task.performer }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  Nothing here now
+  {% endif %}
+  <a href="/create-task/" type="button">Add task</a>
+  <h2>Other tasks</h2>
+  {% if other %}
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Deadline</th>
+      <th>Performer</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for task in other %}
+      <tr>
+        <td>{{ task.name }}</td>
+        <td>{{ task.deadline }}</td>
+        <td>{{ task.performer }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -49,25 +93,18 @@ Tasks
   Nothing here now
   {% endif %}
 
-  <h2>Other tasks</h2>
-  {% if other %}
-  <table>
-    <thead>
-    <tr>
-      <th>Name</th>
-      <th>Language required</th>
-    </tr>
-    </thead>
-    <tbody>
-      {% for task in other %}
-      <tr>
-        <td>{{ task.name }}</td>
-        <td>{{ task.language_required }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  Nothing here now
-  {% endif %}
+<script>
+  /*const report_input = document.getElementById('report');
+  const complete_btn = document.getElementById('complete_task');
+
+  report_input.addEventListener('input', function() {
+    complete_btn.disabled = (report_input.files.length == 0);
+  });*/
+  document.getElementById('self_table').addEventListener('change', function(e){
+    if (e.target.classList.contains('file_input')){
+      const submit_btn = e.target.closest('.task_row').querySelector('.submit_btn');
+      submit_btn.disabled = (e.target.files.length === 0);
+    }
+  });
+</script>
 {% endblock %}

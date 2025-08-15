@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 from django.conf.global_settings import AUTH_USER_MODEL, LOGIN_URL
 
@@ -125,3 +126,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+UPLOAD_ROOT = os.path.join(BASE_DIR, 'reports')
