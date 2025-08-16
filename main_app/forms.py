@@ -1,8 +1,3 @@
-from email.policy import default
-
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.core.exceptions import ValidationError
-
 from .models import User, Task, Qualification, Language
 from django import forms
 
@@ -25,7 +20,7 @@ class SignUpForm(forms.ModelForm):
         if data['chief']:
             data['chief'] = User.objects.get(id=data['chief'])
         if data['password1'] != data['password2']:
-            return
+            return None
         return User.objects.create_user(data['name'], data['email'], data['password1'], data['chief'])
 
 

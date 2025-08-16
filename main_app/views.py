@@ -2,10 +2,8 @@ import json
 import os
 
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, REDIRECT_FIELD_NAME
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.contrib.messages import get_messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -43,8 +41,8 @@ def index(request):
             with open(report_path, 'wb+') as file:
                 for chunk in report.chunks():
                     file.write(chunk)
-        archive = ArchiveTask.objects.from_task(task)
-        archive.save()
+        archive_task = ArchiveTask.objects.from_task(task)
+        archive_task.save()
         task.delete()
         return redirect('homepage')
     subs = User.objects.filter(chief=request.user)
@@ -78,11 +76,7 @@ def create_user(request):
     data = {
         'form': form,
         'chiefs': User.objects.only('id', 'name'),
-        'qualifications': [
-            {'id': qual.id,
-            'name': f'{qual.code} - {qual.name}'}
-            for qual in Qualification.objects.all()
-        ],
+        'qualifications': Qualification.objects.only('id', 'name'),
         'languages': Language.objects.all()
     }
     return render(request, 'create_user.html', data)
@@ -91,7 +85,6 @@ def create_user(request):
 @admin_required
 def edit_user(request):
     if request.method == 'PUT':
-        print(request.body)
         data = json.loads(request.body.decode('utf-8'))
         user = User.objects.get(id=data.get('id'))
         if not user:
@@ -123,7 +116,6 @@ def delete_user(request):
     if not request.user.is_admin or request.method != 'DELETE':
         return redirect('users')
     data = json.loads(request.body.decode('utf-8'))
-    print(data)
     user_id = data.get('user_id')
     user = User.objects.get(id=user_id)
     user.delete()
@@ -142,8 +134,6 @@ def sign_in(request):
             if user is not None:
                 login(request, user)
                 return redirect('homepage')
-            else:
-                print('something went wrong')
     return render(request, 'login.html', {'form': form})
 
 
@@ -153,12 +143,11 @@ def users(request):
         chief_id = request.POST.get('chief')
         password = request.POST.get('password')
         chief = User.objects.get(id=chief_id)
-        user = User.objects.create_user(request.POST.get('name'),
-                                        request.POST.get('email'),
-                                        password,
-                                        chief=chief)
+        User.objects.create_user(request.POST.get('name'),
+                                 request.POST.get('email'),
+                                 password,
+                                 chief=chief)
         return redirect('users')
-    usrs = User.objects.select_related('chief').only('id', 'name', 'chief__name')
     data = {
         'users': [
             {
@@ -167,7 +156,7 @@ def users(request):
                 'email': user.email,
                 'chief': user.chief.name if user.chief else '-'
             }
-            for user in usrs
+            for user in User.objects.select_related('chief').only('id', 'name', 'chief__name')
         ],
     }
     return render(request, 'users.html', context=data)
@@ -210,8 +199,6 @@ def log_out(request):
 
 @admin_required
 def admin(request):
-    #if not request.user.is_admin:
-    #    return redirect('homepage')
     if request.method == 'POST':
         data = request.POST
         code = data.get('code')
@@ -223,16 +210,16 @@ def admin(request):
         return redirect('admin')
     elif request.method == 'PUT':
         data = json.loads(request.body.decode('utf-8'))
-        id = data.get('id')
+        obj_id = data.get('id')
         code = data.get('code')
         name = data.get('name')
         if code:
-            qual = Qualification.objects.get(id=id)
+            qual = Qualification.objects.get(id=obj_id)
             qual.code = code
             qual.name = name
             qual.save()
         else:
-            lang = Language.objects.get(id=id)
+            lang = Language.objects.get(id=obj_id)
             lang.name = name
             lang.save()
     elif request.method == 'DELETE':
@@ -256,7 +243,7 @@ def create_task(request):
         data = request.POST
         form = TaskCreationForm(data)
         if form.is_valid():
-            task = form.save()
+            form.save()
             return redirect('homepage')
         else:
             return redirect('create_task')
@@ -278,7 +265,7 @@ def archive(request):
             messages.error(request, 'Task not found. Invalid ID')
             return redirect(request.META.get('HTTP_REFERER', 'archive'))
         report_path = ''
-        for file in os.listdir(os.path.join(settings.UPLOAD_ROOT)):
+        for file in os.listdir(settings.UPLOAD_ROOT):
             if file.startswith(f'{task_id} '):
                 report_path = os.path.join(settings.UPLOAD_ROOT, file)
                 break

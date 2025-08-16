@@ -94,12 +94,6 @@ Tasks
   {% endif %}
 
 <script>
-  /*const report_input = document.getElementById('report');
-  const complete_btn = document.getElementById('complete_task');
-
-  report_input.addEventListener('input', function() {
-    complete_btn.disabled = (report_input.files.length == 0);
-  });*/
   document.getElementById('self_table').addEventListener('change', function(e){
     if (e.target.classList.contains('file_input')){
       const submit_btn = e.target.closest('.task_row').querySelector('.submit_btn');
