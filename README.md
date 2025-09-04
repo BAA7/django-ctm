@@ -2,7 +2,7 @@
 
 ## 1.1. Purpose
 
-The purpose of this document is to present a detailed description of the Corporate Task Manager. It will explain the purpose and features of the system,the interfaces of the system, what the system will do, the constraints under which it must operate and how the system will react to external stimuli.
+The purpose of this document is to present a detailed description of the Corporate Task Manager. It will explain the purpose and features of the system, the interfaces of the system, what the system will do, the constraints under which it must operate and how the system will react to external stimuli.
 
 This document is intended for anyone interested in this project.
 
@@ -32,7 +32,28 @@ The product to be produced – Corporate Task Manager (CTM) – must help the co
 The following parts of this document contain more specific descriptions of product requirements.
 
 Table of contents:
-TODO
+
+2. Overall description
+   
+   2.1. Product perspective
+   
+   2.2. Product functions
+   
+   2.3. User characteristics
+   
+   2.4. Constraints
+   
+   2.5. Assumptions and dependencies
+   
+3. Specific requirements
+   
+   3.1. External interface requirements
+   
+   3.2. Functional requirements
+   
+   3.3. Performance requirements
+   
+   3.4. Software system attributes
 
 # 2. Overall description
 
@@ -91,6 +112,7 @@ Server:
 * Django 5.2.3
 * Django REST Framework (DRF)
 * SQLite3
+  
 Client:
 * Web browser with JavaScript ES6+ support
 * HTML5, CSS3
